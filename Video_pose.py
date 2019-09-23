@@ -4,21 +4,22 @@ import argparse
 import cv2
 import time
 import warnings
+import pandas as pd
 warnings.filterwarnings('ignore', message='Done!')
 from config_reader import config_reader
 
-from processing import extract_parts, draw
+from processing import extract_parts, draw, plotting
 
 from model.cmu_model import get_testing_model
-
+from Convertor.convert_video import convert_video
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 currentDT = time.localtime()
 start_datetime = time.strftime("-%m-%d-%H-%M-%S", currentDT)
 
 
-if __name__ == '__main__':
-    
+
+def video_cap():    
     path_model_h5 = 'model.h5'
     keras_weights_file = path_model_h5
     #Analysis for the every n frames
@@ -30,10 +31,10 @@ if __name__ == '__main__':
     print('start processing...')
 
     # Video input
-    video_file = '/home/saireddy/Desktop/Flask/OrbitPose/videos/1.mp4'
+    video_file = '/home/saireddy/Desktop/Flask/OrbitPose/videos/4.avi'
     
     # Output location
-    video_output = '/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose3.avi'
+    video_output = '/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose8.avi'
 
     model = get_testing_model()
     model.load_weights(keras_weights_file)
@@ -92,18 +93,17 @@ if __name__ == '__main__':
             #print("All Substes", subset)
             #print("All candidate",candidate)
             
-            canvas, theta, theta1, theta2, theta3  = draw(orig_image, all_peaks, subset, candidate)
+            canvas, theta, theta1, theta2, theta3, Angle1, Angle2, Angle3, Angle4 = draw(orig_image, all_peaks, subset, candidate)
 
             #chr(176)
             #label = "Right hand angle is :-()".format(theta)
             cv2.rectangle(canvas, (0, 0), (265, 35), color=(0, 255, 0), thickness=2)
-            cv2.putText(canvas, "right Hand angle :- {0:.2f}".format(float(theta)), (30, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
-            cv2.putText(canvas, "right leg angle :- {0:.2f}".format(float(theta2)), (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+            cv2.putText(canvas, "right Hand angle :- {0:.2f}".format(float(theta)), (30, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
+            cv2.putText(canvas, "right leg angle :- {0:.2f}".format(float(theta2)), (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
 
             cv2.rectangle(canvas, (645, 0), (900, 35), color=(0, 255, 0), thickness=2)
-            cv2.putText(canvas, "left Hand angle :- {0:.2f}".format(float(theta1)), (650, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 225))
-            cv2.putText(canvas, "left leg angle :- {0:.2f}".format(float(theta3)), (650, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
-
+            cv2.putText(canvas, "left Hand angle :- {0:.2f}".format(float(theta1)), (650, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 225))
+            cv2.putText(canvas, "left leg angle :- {0:.2f}".format(float(theta3)), (650, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
             
             #print("Theta in opencv ======", theta)
             #print("Theta1 in opencv ======", theta1)
@@ -124,6 +124,31 @@ if __name__ == '__main__':
 
     cv2.destroyAllWindows()
     cam.release()
+
+    print("Angle 1", Angle1)
+    print("Angle 2", Angle2)
+    print("Angle 3", Angle3)
+    print("Angle 4", Angle4)
+
+    dct = {
+        'Right Hand' : Angle1,
+        'Left Hand' : Angle2,
+        'Right Leg' : Angle3,
+        'Left Leg' : Angle4
+        }
+
+    data = pd.DataFrame(dct)
+    data.to_csv("CSV/data.csv")
+    
+    lis = [i for i in range(len(Angle1))]
+    plotting(lis, Angle1,'r', 'RH', 'Right Hand', "plotimages/Right_Hand.jpg")
+    plotting(lis, Angle2,'b', 'LH', 'Left Hand', "plotimages/Left_Hand.jpg")
+    plotting(lis, Angle3,'k', 'RL', 'Right leg', "plotimages/Right_Leg.jpg")
+    plotting(lis, Angle4,'yellow','LL', "Left Leg", "plotimages/Left_Leg.jpg")
+
+    convert_video('/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose8.avi', '/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose8.mp4')
+
+video_cap()    
     
 
 

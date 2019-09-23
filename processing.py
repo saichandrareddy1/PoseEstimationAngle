@@ -3,7 +3,7 @@ import math
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 import cv2
-
+import matplotlib.pyplot as plt
 import util
 from scipy.spatial import distance 
 
@@ -186,7 +186,19 @@ a_ = []
 b_ = []
 aLL = []
 Distance = []
-Angle = []
+Angle1 = []
+Angle2 = []
+Angle3 = []
+Angle4 = []
+
+def plotting(leng, Angle, co, le, legend, filename):
+        plt.plot(leng, Angle, c = co)
+        plt.xlabel("Total frames")
+        plt.ylabel("Angle at points")
+        plt.legend(le)
+        plt.title(legend)
+        plt.savefig(filename)
+        plt.show()
 
 def dist(Distance):
         for i in range(len(Distance)-1):
@@ -197,13 +209,34 @@ def dist(Distance):
                 #print(a_1, b_1, c_1)
         return c_1, a_1, b_1
 
-def angle_final(c_1, a_1, b_1):
+def angle_final1(c_1, a_1, b_1):
         top = c_1**2 + a_1**2 - b_1**2
         down = 2*c_1*a_1
         before = math.acos(top/down)
         theta = before * (180/math.pi)
-        Angle.append(theta)
+        Angle1.append(theta)
         return theta
+def angle_final2(c_1, a_1, b_1):
+        top = c_1**2 + a_1**2 - b_1**2
+        down = 2*c_1*a_1
+        before = math.acos(top/down)
+        theta1 = before * (180/math.pi)
+        Angle2.append(theta1)
+        return theta1
+def angle_final3(c_1, a_1, b_1):
+        top = c_1**2 + a_1**2 - b_1**2
+        down = 2*c_1*a_1
+        before = math.acos(top/down)
+        theta3 = before * (180/math.pi)
+        Angle3.append(theta3)
+        return theta3
+def angle_final4(c_1, a_1, b_1):
+        top = c_1**2 + a_1**2 - b_1**2
+        down = 2*c_1*a_1
+        before = math.acos(top/down)
+        theta4 = before * (180/math.pi)
+        Angle4.append(theta4)
+        return theta4
 
 def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
         canvas = input_image.copy()
@@ -228,7 +261,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                                 elif point == 4:
                                         Distance.append((A, B))
                                         c_1, a_1, b_1 = dist(Distance)
-                                        theta = str(angle_final(c_1, a_1, b_1))
+                                        theta = str(angle_final1(c_1, a_1, b_1))
                                         Distance.clear()
                                 else:
                                         continue
@@ -245,7 +278,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                                 elif point == 10:
                                         Distance.append((A, B))
                                         c_1, a_1, b_1 = dist(Distance)
-                                        theta3 = str(angle_final(c_1, a_1, b_1))
+                                        theta3 = str(angle_final3(c_1, a_1, b_1))
                                         Distance.clear()
                                 else:
                                         continue
@@ -264,7 +297,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                             elif point == 7:
                                 Distance.append((A, B))
                                 c_1, a_1, b_1 = dist(Distance)
-                                theta1 = str(angle_final(c_1, a_1, b_1))
+                                theta1 = str(angle_final2(c_1, a_1, b_1))
                                 Distance.clear()
                             else:
                                 continue
@@ -282,7 +315,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                                 elif point == 13:
                                         Distance.append((A, B))
                                         c_1, a_1, b_1 = dist(Distance)
-                                        theta4 = str(angle_final(c_1, a_1,b_1))
+                                        theta4 = str(angle_final4(c_1, a_1,b_1))
                                         Distance.clear()
                                 else:
                                         continue
@@ -291,6 +324,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
 ##################################################ANGLE DONE##################################################################
                         
                 cv2.circle(canvas, (A, B), 2, util.circle_colors[i], thickness=-1)
+        
 
         stickwidth = 1
         for i in range(17):
@@ -311,4 +345,5 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                         canvas = cv2.addWeighted(canvas, 0.4, cur_canvas, 0.6, 0)
 
 
-        return canvas, theta, theta1, theta3, theta4
+        return canvas, theta, theta1, theta3, theta4, Angle1, Angle2, Angle3, Angle4
+
