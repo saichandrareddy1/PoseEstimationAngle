@@ -6,6 +6,8 @@ import time
 import warnings
 import pandas as pd
 import numpy as np
+from graph import plot
+from CSV_save import csv_create
 warnings.filterwarnings('ignore')
 
 from config_reader import config_reader
@@ -33,11 +35,11 @@ def video_cap():
     print('start processing...')
 
     # Video input
-    video_file = '/home/saireddy/Desktop/Flask/OrbitPose/videos/8.mp4'
+    video_file = '/home/saireddy/Desktop/Flask/OrbitPose/videos/10.mp4'
     print(video_file)
     
     # Output location
-    video_output = '/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose12.avi'
+    video_output = '/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose14.avi'
 
     model = get_testing_model()
     model.load_weights(keras_weights_file)
@@ -138,34 +140,14 @@ def video_cap():
     print("Angle 3", Angle3)
     print("Angle 4", Angle4)
 
-    lis = [len(Angle1), len(Angle2), len(Angle3), len(Angle4)]
+    convert_video('/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose14.avi',
+                  '/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose14.mp4')
 
-    maxi = max(lis) 
+    return Angle1, Angle2, Angle3, Angle4
 
-    if len(Angle1) == maxi and len(Angle2) == maxi and len(Angle3) == maxi and len(Angle4) == maxi:
-        dct = {
-            'Right Hand' : Angle1,
-            'Left Hand' : Angle2,
-            'Right Leg' : Angle3,
-            'Left Leg' : Angle4
-            }
-        data = pd.DataFrame(dct)
-        data.to_csv("CSV/data.csv")
-    else:
-         print("SOrry NOt valid Videos is uploaded")
-
-    plotting([i for i in  range(len(Angle1))],
-             Angle1,'r', 'RH', 'Right Hand', "plotimages/Right_Hand.jpg")
-    plotting([i for i in  range(len(Angle2))],
-             Angle2,'b', 'LH', 'Left Hand', "plotimages/Left_Hand.jpg")
-    plotting([i for i in  range(len(Angle3))],
-             Angle3,'k', 'RL', 'Right leg', "plotimages/Right_Leg.jpg")
-    plotting([i for i in  range(len(Angle4))],
-             Angle4,'yellow','LL', "Left Leg", "plotimages/Left_Leg.jpg")
-
-    convert_video('/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose12.avi', '/home/saireddy/Desktop/Flask/OrbitPose/videos/output/pose12.mp4')
-
-video_cap()    
+Angle1, Angle2, Angle3, Angle4 = video_cap()
+csv_create(Angle1, Angle2, Angle3, Angle4)
+plot(Angle1, Angle2, Angle3, Angle4)
     
 
 
