@@ -1,5 +1,6 @@
 import os
 from processing import plotting
+from pie_plotting import pie_plot
 
 def plot(Angle1, Angle2, Angle3, Angle4):
     
@@ -18,6 +19,7 @@ def plot(Angle1, Angle2, Angle3, Angle4):
                              Angle3,'k', 'RL', 'Right leg', "Right_Leg1.jpg")
                 plotting([i for i in  range(len(Angle4))],
                              Angle4,'yellow','LL', "Left Leg", "Left_Leg1.jpg")
+                pie_plot(Angle1, Angle2, Angle3, Angle4, "Demographic.jpg")
         else:
             os.mkdir("plotimages/Images")
             if not os.listdir("plotimages/Images"):
@@ -30,6 +32,7 @@ def plot(Angle1, Angle2, Angle3, Angle4):
                              Angle3,'k', 'RL', 'Right leg', "Right_Leg1.jpg")
                 plotting([i for i in  range(len(Angle4))],
                              Angle4,'yellow','LL', "Left Leg", "Left_Leg1.jpg")
+                pie_plot(Angle1, Angle2, Angle3, Angle4, "Demographic.jpg")
                 
     except Exception as e:
         print("Exception Found:", e)

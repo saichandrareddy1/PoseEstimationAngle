@@ -201,17 +201,17 @@ def plotting(leng, Angle, co, le, legend, filename):
         plt.title(legend)
         plt.savefig(filename)
         plt.show()
-
-
 points = []
 
 
-def dist(Distance, points):
+def dist(Distance):
+        #print("Distance", Distance)
         for i in range(len(Distance)-1):
-                        #print(Distance)
+                #print(Distance)
                 c_1 = distance.euclidean(Distance[1], Distance[0])
                 a_1 = distance.euclidean(Distance[1], Distance[2])
                 b_1 = distance.euclidean(Distance[2], Distance[0])
+                #print(c_1, a_1, b_1)
                 return c_1, a_1, b_1
         else:
                 print("Sorry")
@@ -292,9 +292,6 @@ def angle_final4(c_1, a_1, b_1):
                 
         return  theta4
 
-
-
-
 def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
 
         
@@ -312,12 +309,11 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                         point = all_peaks[i][j][3]
                         li = [2, 3, 4]
 
-                        #print("Point:---", point)
+                        #print(f"Point:---{A} {B}")
 
                         ####RIGHT SIDE
                         ##RIGHT HAND
                         if point in li:
-                                
                                 if point == 2:
                                         points.append(point)
                                         Distance.append((A, B))
@@ -328,7 +324,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                                         points.append(point)
                                         Distance.append((A, B))                                
                                         #print("Disatce 1", Distance)
-                                        c_1, a_1, b_1 = dist(Distance, points)
+                                        c_1, a_1, b_1 = dist(Distance)
                                         theta = str(angle_final1(c_1, a_1, b_1))
                                         Distance.clear()
                                         points.clear()
@@ -353,7 +349,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                                         points.append(point)
                                         Distance.append((A, B))
                                         #print("Disatce 2", Distance)
-                                        c_1, a_1, b_1 = dist(Distance, points)
+                                        c_1, a_1, b_1 = dist(Distance)
                                         theta3 = str(angle_final3(c_1, a_1, b_1))
                                         Distance.clear()
                                         points.clear()
@@ -379,7 +375,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                                 points.append(point)
                                 Distance.append((A, B))    
                                 #print("Disatce 3", Distance)
-                                c_1, a_1, b_1 = dist(Distance, points)
+                                c_1, a_1, b_1 = dist(Distance)
                                 theta1 = str(angle_final2(c_1, a_1, b_1))
                                 Distance.clear()
                                 points.clear()
@@ -403,7 +399,7 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                                         points.append(point)
                                         Distance.append((A, B))
                                         #print("Disatce 4", Distance)
-                                        c_1, a_1, b_1 = dist(Distance, points)
+                                        c_1, a_1, b_1 = dist(Distance)
                                         theta4 = str(angle_final4(c_1, a_1,b_1))
                                         Distance.clear()
                                         points.clear()
@@ -413,7 +409,8 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                                 #Angle4.append(np.nan)
                                 pass
 
-                cv2.circle(canvas, (A, B), 2, util.circle_colors[i], thickness=-1)
+
+                        cv2.circle(canvas, (A, B), 2, util.circle_colors[i], thickness=-1)
                                 
 
 ##################################################ANGLE DONE##################################################################
@@ -432,11 +429,11 @@ def draw(input_image, all_peaks, subset, candidate, resize_fac=1):
                         m_y = np.mean(y)
                         length = ((x[0] - x[1]) ** 2 + (y[0] - y[1]) ** 2) ** 0.5
                         angle = math.degrees(math.atan2(x[0] - x[1], y[0] - y[1]))
+
                         polygon = cv2.ellipse2Poly((int(m_y * resize_fac), int(m_x * resize_fac)),
-                                                          (int(length * resize_fac / 2), stickwidth), int(angle), 0, 360, 1)
+                                       (int(length * resize_fac / 2), stickwidth), int(angle), 0, 360, 1)
                         cv2.fillConvexPoly(cur_canvas, polygon, util.colors[i])
                         canvas = cv2.addWeighted(canvas, 0.4, cur_canvas, 0.6, 0)
-
 
         return canvas, theta, theta1, theta3, theta4, Angle1, Angle2, Angle3, Angle4
 
